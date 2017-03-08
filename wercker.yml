@@ -1,0 +1,36 @@
+box: golang
+
+launch-build:
+  steps:
+    - script:
+        name: Commit hash of change being built
+        code: git rev-parse HEAD    
+
+    - script:
+        name: Commit detail
+        code: git show
+      
+development-build:
+  steps:
+    - wercker/setup-go-workspace:
+        package-dir: github.com/mevansam/cf-copy-plugin
+
+    - script:
+        name: Get govendor
+        code: |
+          go get -u github.com/kardianos/govendor
+
+    - script:
+        name: Synchronize vendored dependencies
+        code: |
+          govendor sync
+
+    - script:
+        name: Build
+        code: |
+          go build ./...
+
+    - script:
+        name: Run unit tests
+        code: |
+          govendor test -v +local
