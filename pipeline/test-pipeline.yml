@@ -38,4 +38,4 @@ jobs:
       - name: cf-event
       run:
         path: ls
-        args: [-al]
+        args: [-al, cf-event]

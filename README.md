@@ -1,6 +1,15 @@
 # Cloud Foundry Event Resource
 
-Detects cloud foundry events within a given target.
+Detects cloud foundry events within a given target. The following events will be reported along with the application name, GUID and timestamp.
+
+|Event|Description|
+|-----|-----------|
+|created|New application pushed|
+|modified|Application updated via push|
+|scaled|Application was scaled up or down|
+|routed-added|A route was added to an application|
+|routed-deleted|A route was deleted from an application|
+|deleted|Application was deleted|
 
 ## Source Configuration
 
