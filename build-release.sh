@@ -54,6 +54,7 @@ if [[ "$1" == "release" ]]; then
     if [[ -n $3 ]] && [[ -n $4 ]]; then
         docker login -u $3 -p $4
 
+        docker tag cf-event-release $2/cf-event:latest
         docker tag cf-event-release $2/cf-event:$TAG
         docker push $2/cf-event
     fi
