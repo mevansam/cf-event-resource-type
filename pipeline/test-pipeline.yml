@@ -1,0 +1,42 @@
+---
+resource_types:
+
+- name: cf-event-type
+  type: docker-image
+  source:
+    repository: mevansam/cf-event-type
+    tag: latest
+
+resources:
+
+- name: cf-event
+  type: cf-event-type
+  source:
+    api: https://api.local.pcfdev.io
+    user: admin
+    password: admin
+    org: pcfdev-org
+    space: pcfdev-space
+    skip-ssl-validation: true
+    apps:
+    - app1
+    - app2
+
+jobs:
+
+- name: do-something-on-cf-event
+  plan:
+  - get: cf-event
+    trigger: true
+  - task: the-something
+    config:
+      platform: linux
+      image_resource:
+        type: docker-image
+        source: 
+          repository: ubuntu
+      inputs:
+      - name: cf-event
+      run:
+        path: ls
+        args: [-al]
