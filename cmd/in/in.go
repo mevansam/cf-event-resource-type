@@ -2,14 +2,27 @@ package main
 
 import (
 	"encoding/json"
+	"fmt"
 	"os"
 
 	"github.com/mevansam/cf-event-resource-type/resource"
+	"github.com/mitchellh/colorstring"
 )
 
 func main() {
+
+	fmt.Printf(colorstring.Color("[yellow]Running 'in' command to create Cloud Foundry event content for concourse job...\n"))
+
 	var request resource.InRequest
 	inputRequest(&request)
+
+	if request.Source.Debug {
+		b, err := json.MarshalIndent(request, "", "  ")
+		if err != nil {
+			resource.Fatalf("[red]Marshalling JSON input for debugging")
+		}
+		fmt.Printf(colorstring.Color("[green]In command input:\n%s\n"), string(b))
+	}
 
 	if len(os.Args) < 2 {
 		resource.Fatalf("[red]the destination directory was not passed in as the first argument")
@@ -24,6 +37,14 @@ func main() {
 	response, err := command.Run(request)
 	if err != nil {
 		resource.Fatalf("[red]running command: %s\n", err)
+	}
+
+	if request.Source.Debug {
+		b, err := json.MarshalIndent(response, "", "  ")
+		if err != nil {
+			resource.Fatalf("[red]Marshalling JSON response for debugging")
+		}
+		fmt.Printf(colorstring.Color("[green]In command response:\n%s\n"), string(b))
 	}
 
 	outputResponse(response)
