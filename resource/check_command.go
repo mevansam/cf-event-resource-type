@@ -39,6 +39,8 @@ func (c *CheckCommand) Run(request CheckRequest) (versions []Version, err error)
 		eventFilter  filters.EventFilter
 	)
 
+	logger := c.client.session.GetSessionLogger()
+
 	allApps = len(request.Source.Apps) == 0
 	eventFilter = filters.NewAppEventFilter(c.client.session)
 	newVersion := make(Version)
@@ -65,6 +67,9 @@ func (c *CheckCommand) Run(request CheckRequest) (versions []Version, err error)
 			} else {
 				from = epoch
 			}
+
+			logger.DebugMessage("Retrieving new events for app '%s' after timestamp '%s'.",
+				app.Name, from.Format(time.RFC3339))
 
 			if appEvents, err = eventFilter.GetEventsForApp(app.GUID, from); err != nil {
 				return
