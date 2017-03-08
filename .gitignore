@@ -33,6 +33,6 @@ _*
 vendor/*/
 bin/
 
-check
-in
-out
+cmd/check/check
+cmd/in/in
+cmd/out/out
