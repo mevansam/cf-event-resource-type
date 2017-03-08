@@ -21,6 +21,12 @@ release)
     ;;
 esac
 
+TAG="$(git tag -l --points-at HEAD)"
+if [[ "$1" == "release" ]] && [[ -z "$TAG" ]] ; then
+    echo "To build and push the release image their must be a version tag at the head of the branch."
+    exit 1
+fi
+
 ROOT_DIR=$(cd $(dirname $0) && pwd)
 pushd $ROOT_DIR
 set -x
@@ -42,7 +48,7 @@ GOOS=linux GOARCH=amd64 go build
 popd
 
 TAG="$(git tag -l --points-at HEAD)"
-if [[ "$1" == "release" ]] && [[ -n "$TAG" ]] ; then
+if [[ "$1" == "release" ]]; then
     docker build . -t cf-event-release --squash
 
     if [[ -n $3 ]] && [[ -n $4 ]]; then
@@ -51,9 +57,6 @@ if [[ "$1" == "release" ]] && [[ -n "$TAG" ]] ; then
         docker tag cf-event-release $2/cf-event:$TAG
         docker push $2/cf-event
     fi
-else
-    echo "To build and push the release image their must be a version tag at the head of the branch."
-    exit 1
 fi
 
 set +x
