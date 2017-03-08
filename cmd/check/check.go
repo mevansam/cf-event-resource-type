@@ -12,7 +12,8 @@ import (
 
 func main() {
 
-	fmt.Printf(colorstring.Color("[yellow]Running 'check' command to retrieve Cloud Foundry Events...\n"))
+	fmt.Fprintf(os.Stderr,
+		"Running 'check' command to retrieve Cloud Foundry Events...\n")
 
 	var request resource.CheckRequest
 	inputRequest(&request)
@@ -22,7 +23,7 @@ func main() {
 		if err != nil {
 			resource.Fatalf("[red]Marshalling JSON input for debugging")
 		}
-		fmt.Printf(colorstring.Color("[green]Check command input:\n%s\n"), string(b))
+		fmt.Fprintf(os.Stderr, colorstring.Color("[green]Check command input:\n%s\n"), string(b))
 	}
 
 	cfClient, err := resource.NewCfClient(cfapi.NewCfCliSessionProvider(), request.Source)
@@ -41,7 +42,7 @@ func main() {
 		if err != nil {
 			resource.Fatalf("[red]Marshalling JSON response for debugging")
 		}
-		fmt.Printf(colorstring.Color("[green]Check command response:\n%s\n"), string(b))
+		fmt.Fprintf(os.Stderr, colorstring.Color("[green]Check command response:\n%s\n"), string(b))
 	}
 
 	outputResponse(response)

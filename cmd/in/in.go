@@ -11,7 +11,8 @@ import (
 
 func main() {
 
-	fmt.Printf(colorstring.Color("[yellow]Running 'in' command to create Cloud Foundry event content for concourse job...\n"))
+	fmt.Fprintf(os.Stderr, colorstring.Color(
+		"[yellow]Running 'in' command to create Cloud Foundry event content for concourse job...\n"))
 
 	var request resource.InRequest
 	inputRequest(&request)
@@ -21,7 +22,7 @@ func main() {
 		if err != nil {
 			resource.Fatalf("[red]Marshalling JSON input for debugging")
 		}
-		fmt.Printf(colorstring.Color("[green]In command input:\n%s\n"), string(b))
+		fmt.Fprintf(os.Stderr, colorstring.Color("[green]In command input:\n%s\n"), string(b))
 	}
 
 	if len(os.Args) < 2 {
@@ -44,7 +45,7 @@ func main() {
 		if err != nil {
 			resource.Fatalf("[red]Marshalling JSON response for debugging")
 		}
-		fmt.Printf(colorstring.Color("[green]In command response:\n%s\n"), string(b))
+		fmt.Fprintf(os.Stderr, colorstring.Color("[green]In command response:\n%s\n"), string(b))
 	}
 
 	outputResponse(response)

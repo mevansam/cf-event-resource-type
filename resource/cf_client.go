@@ -1,6 +1,8 @@
 package resource
 
 import (
+	"os"
+
 	"github.com/mevansam/cf-cli-api/cfapi"
 )
 
@@ -21,9 +23,9 @@ func NewCfClient(provider cfapi.CfSessionProvider, src Source) (*CfClient, error
 	)
 
 	if src.Trace {
-		logger = cfapi.NewLogger(src.Debug, "true")
+		logger = cfapi.NewFileLogger(src.Debug, "true", os.Stdin, os.Stderr)
 	} else {
-		logger = cfapi.NewLogger(src.Debug, "")
+		logger = cfapi.NewFileLogger(src.Debug, "", os.Stdin, os.Stderr)
 	}
 
 	cfClient.session, err = provider.NewCfSession(

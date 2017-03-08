@@ -30,6 +30,7 @@ fi
 ROOT_DIR=$(cd $(dirname $0) && pwd)
 pushd $ROOT_DIR
 set -x
+set -e 
 
 go get -u github.com/kardianos/govendor
 govendor sync
@@ -57,8 +58,14 @@ if [[ "$1" == "release" ]]; then
         docker tag cf-event-release $2/cf-event:latest
         docker tag cf-event-release $2/cf-event:$TAG
         docker push $2/cf-event
+
+        # clean up
+        docker rmi $2/cf-event:latest
+        docker rmi $2/cf-event:$TAG
+        docker rmi cf-event-release
     fi
 fi
 
+set +e
 set +x
 popd
