@@ -49,6 +49,23 @@ func (c *CheckCommand) Run(request CheckRequest) (versions []Version, err error)
 		return
 	}
 
+	for appName, appEventVersion := range request.Version {
+
+		if lastAppEvent, err = filters.NewAppEvent(appEventVersion); err != nil {
+			return
+		}
+		if lastAppEvent.EventType != filters.EtDeleted {
+			if _, exists = utils.ContainsApp(appName, appsInSpace); !exists {
+				appsInSpace = append(appsInSpace, models.Application{
+					ApplicationFields: models.ApplicationFields{
+						GUID: lastAppEvent.SourceGUID,
+						Name: lastAppEvent.SourceName,
+					},
+				})
+			}
+		}
+	}
+
 	for _, app := range appsInSpace {
 
 		getAppEvents = true
