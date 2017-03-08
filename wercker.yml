@@ -13,7 +13,7 @@ launch-build:
 development-build:
   steps:
     - wercker/setup-go-workspace:
-        package-dir: github.com/mevansam/cf-copy-plugin
+        package-dir: github.com/mevansam/cf-event-resource-type
 
     - script:
         name: Get govendor
@@ -33,4 +33,4 @@ development-build:
     - script:
         name: Run unit tests
         code: |
-          govendor test -v +local
+          govendor test +local -test.v -ginkgo.v

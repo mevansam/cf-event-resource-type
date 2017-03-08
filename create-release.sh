@@ -3,7 +3,7 @@
 TAG=$1
 echo $TAG | grep "^[0-9]*\.[0-9]*\.[0-9]*$" 2>&1 > /dev/null
 if [[ $? == 1 ]]; then
-    echo -e "\nUSAGE: ./createRelease.sh [TAG] [BRANCH]"
+    echo -e "\nUSAGE: ./create-release.sh [TAG] [BRANCH]"
     echo -e "\n    TAG     Should be of the format #.#.#"
     echo -e "    BRANCH  Commits on this branch will be merged to master and tagged for the release\n"
     exit 1
