@@ -40,7 +40,7 @@ resource_types:
 - name: cf-event-type
   type: docker-image
   source:
-    repository: mevansam/cf-event-type
+    repository: mevansam/cf-event
     tag: latest
 
 resources:

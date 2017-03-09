@@ -16,7 +16,7 @@ resources:
     user: admin
     password: admin
     org: pcfdev-org
-    space: pcfdev-space
+    space: pcfdev-space-1
     skip-ssl-validation: true
     debug: true
     trace: true
