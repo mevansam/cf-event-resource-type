@@ -66,53 +66,57 @@ func (c *CheckCommand) Run(request CheckRequest) (versions []Version, err error)
 		}
 	}
 
-	for _, app := range appsInSpace {
+	if len(appsInSpace) > 0 {
+		for _, app := range appsInSpace {
 
-		getAppEvents = true
-		if !allApps {
-			_, getAppEvents = utils.ContainsInStrings([]string{app.Name}, request.Source.Apps)
-		}
+			getAppEvents = true
+			if !allApps {
+				_, getAppEvents = utils.ContainsInStrings([]string{app.Name}, request.Source.Apps)
+			}
 
-		if getAppEvents {
+			if getAppEvents {
 
-			appEventVersion, exists = request.Version[app.Name]
-			if exists {
-				if lastAppEvent, err = filters.NewAppEvent(appEventVersion); err != nil {
+				appEventVersion, exists = request.Version[app.Name]
+				if exists {
+					if lastAppEvent, err = filters.NewAppEvent(appEventVersion); err != nil {
+						return
+					}
+					from = lastAppEvent.Timestamp
+				} else {
+					from = epoch
+				}
+
+				logger.DebugMessage("Retrieving new events for app '%s' after timestamp '%s'.",
+					app.Name, from.Format(time.RFC3339))
+
+				if appEvents, err = eventFilter.GetEventsForApp(app.GUID, from); err != nil {
 					return
 				}
-				from = lastAppEvent.Timestamp
-			} else {
-				from = epoch
-			}
-
-			logger.DebugMessage("Retrieving new events for app '%s' after timestamp '%s'.",
-				app.Name, from.Format(time.RFC3339))
-
-			if appEvents, err = eventFilter.GetEventsForApp(app.GUID, from); err != nil {
-				return
-			}
-			if exists {
-				if len(appEvents) > 0 {
-					newVersion[app.Name] = fmt.Sprintf("%s", appEvents[0])
-				} else {
-					newVersion[app.Name] = fmt.Sprintf("%s", lastAppEvent)
-				}
-			} else {
-				// Iterate back in time until last deploy event is found and start from there
-				i := len(appEvents) - 1
-				for i >= 0 {
-					ae := appEvents[i]
-					if ae.EventType == filters.EtCreated || ae.EventType == filters.EtModified {
-						break
+				if exists {
+					if len(appEvents) > 0 {
+						newVersion[app.Name] = fmt.Sprintf("%s", appEvents[0])
+					} else {
+						newVersion[app.Name] = fmt.Sprintf("%s", lastAppEvent)
 					}
-					i--
-				}
-				if i >= 0 {
-					newVersion[app.Name] = fmt.Sprintf("%s", appEvents[i])
+				} else {
+					// Iterate back in time until last deploy event is found and start from there
+					i := len(appEvents) - 1
+					for i >= 0 {
+						ae := appEvents[i]
+						if ae.EventType == filters.EtCreated || ae.EventType == filters.EtModified {
+							break
+						}
+						i--
+					}
+					if i >= 0 {
+						newVersion[app.Name] = fmt.Sprintf("%s", appEvents[i])
+					}
 				}
 			}
 		}
+		versions = []Version{newVersion}
+	} else {
+		versions = []Version{request.Version}
 	}
-	versions = []Version{newVersion}
 	return
 }
