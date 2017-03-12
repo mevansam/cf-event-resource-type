@@ -25,6 +25,8 @@ for a in $(echo $CF_APPS); do
 
         if [[ $TARGET_TS -gt $SOURCE_TS ]]; then
             echo "Target app is more recent. It will not be updated with source app contents."
+        elif [[ "$(cat cf-event/$a.event)" == "deleted" ]]; then
+            cf delete $a -r -f
         else
             APPS_TO_COPY="$APPS_TO_COPY$a "        
         fi
