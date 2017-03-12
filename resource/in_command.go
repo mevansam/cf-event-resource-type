@@ -34,7 +34,7 @@ func (c *InCommand) Run(request InRequest) (response InResponse, err error) {
 	*/
 
 	var (
-		envFile, appEventTypeFile, appEventTimestampFile, versionFile, metaDataFile *os.File
+		envFile, appGUIDFile, appEventTypeFile, appEventTimestampFile, versionFile, metaDataFile *os.File
 
 		appNames bytes.Buffer
 		appEvent filters.AppEvent
@@ -69,6 +69,14 @@ func (c *InCommand) Run(request InRequest) (response InResponse, err error) {
 		if appEvent, err = filters.NewAppEvent(appEventData); err != nil {
 			return
 		}
+
+		if appGUIDFile, err = os.OpenFile(c.downloadDir+fmt.Sprintf("/%s.guid", appName),
+			os.O_RDWR|os.O_CREATE|os.O_TRUNC, 0644); err != nil {
+			return
+		}
+		appGUIDFile.WriteString(fmt.Sprintf("%s", appEvent.SourceGUID))
+		appGUIDFile.Close()
+
 		if appEventTypeFile, err = os.OpenFile(c.downloadDir+fmt.Sprintf("/%s.event", appName),
 			os.O_RDWR|os.O_CREATE|os.O_TRUNC, 0644); err != nil {
 			return

@@ -9,6 +9,11 @@ resource_types:
 
 resources:
 
+- name: ci-pipeline-source
+  type: git
+  source:
+    uri: https://github.com/mevansam/cf-event-resource-type
+
 - name: cf-event
   type: cf-event-type
   source:
@@ -16,26 +21,34 @@ resources:
     user: admin
     password: admin
     org: pcfdev-org
-    space: pcfdev-space-1
+    space: dev1
     skip-ssl-validation: true
     debug: true
     trace: true
 
 jobs:
 
-- name: do-something-on-cf-event
+- name: app-sync
   plan:
+  - get: ci-pipeline-source
   - get: cf-event
     trigger: true
-  - task: the-something
+  - task: copy-apps
     config:
       platform: linux
       image_resource:
         type: docker-image
         source: 
-          repository: ubuntu
+          repository: mevansam/cf-cli-copy
       inputs:
+      - name: ci-pipeline-source
       - name: cf-event
       run:
-        path: ls
-        args: [-al, cf-event]
+        path: ci-pipeline-source/example/copy-apps.sh
+      params:
+        CF_TARGET_API: https://api.local.pcfdev.io
+        CF_TARGET_SKIP_SSL_VALIDATION: --skip-ssl-validation
+        CF_TARGET_PASSWORD: admin
+        CF_TARGET_USER: admin
+        CF_TARGET_ORG: pcfdev-org
+        CF_TARGET_SPACE: dev2

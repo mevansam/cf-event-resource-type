@@ -1,0 +1,26 @@
+---
+platform: linux
+
+image_resource:
+  type: docker-image
+  source: 
+    repository: mevansam/cf-cli-copy
+    tag: latest
+
+inputs:
+- name: ci-pipeline-source
+- name: cf-event
+
+run:
+  path: ./ci-pipeline-source/copy-apps.sh
+  # path: ls
+  # args: [-al, ci-pipeline-source]
+
+params:
+  CF_TARGET_API: https://api.local.pcfdev.io
+  CF_TARGET_SKIP_SSL_VALIDATION: --skip-ssl-validation
+  CF_TARGET_PASSWORD: admin
+  CF_TARGET_USER: admin
+  CF_TARGET_ORG: pcfdev-org
+  CF_TARGET_SPACE: dev2
+  # CF_TRACE: true

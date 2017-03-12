@@ -29,6 +29,7 @@ _*
 *.gz
 *.zip
 
+.vagrant/
 .wercker/
 vendor/*/
 bin/
