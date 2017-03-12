@@ -40,7 +40,9 @@ func (c *InCommand) Run(request InRequest) (response InResponse, err error) {
 		appEvent filters.AppEvent
 	)
 
-	// Create ENV.sh
+	if request.Version == nil {
+		Fatal("no version information passed to the 'in' command processor")
+	}
 
 	if envFile, err = os.OpenFile(c.downloadDir+"/ENV.sh",
 		os.O_RDWR|os.O_CREATE|os.O_TRUNC, 0744); err != nil {
