@@ -4,6 +4,15 @@ This is simple demo of the `cf-event` resource type being used to trigger a copy
 
 # Running the example
 
+```
+vagrant up
+
+fly --target local login --concourse-url http://192.168.100.4:8080
+fly --target local sync
+
+fly --target local set-pipeline --pipeline app-copy-pipeline --config app-copy-pipeline.yml
+```
+
 # Testing the task locally
 
 ```
