@@ -26,6 +26,8 @@ fly --target local set-pipeline --pipeline app-copy-pipeline --config app-copy-p
 
 You can also run the task locally by running the `check.go` and `in.go` command code via the [Go](https://golang.org/) as shown below. This can be useful for debugging the Concourse resource type code.
 
+> To run the examples below you will need the [`jq`](https://stedolan.github.io/jq/) tool available within the system to path to be able to parse the JSON results
+
 ```
 SOURCE=$(echo '{
     "api": "https://api.local.pcfdev.io",
