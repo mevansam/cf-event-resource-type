@@ -5,7 +5,7 @@ Detects cloud foundry events within a given target. The following events will be
 |Event|Description|
 |-----|-----------|
 |created|New application pushed|
-|modified|Application updated via push|
+|modified|Application updated via push or restage|
 |scaled|Application was scaled up or down|
 |routed-added|A route was added to an application|
 |routed-deleted|A route was deleted from an application|
