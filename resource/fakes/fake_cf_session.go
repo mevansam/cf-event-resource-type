@@ -153,20 +153,22 @@ type FakeCfSession struct {
 	domainsReturns     struct {
 		result1 api.DomainRepository
 	}
-	GetAllEventsInSpaceStub        func(from time.Time) (events map[string]cfapi.CfEvent, err error)
+	GetAllEventsInSpaceStub        func(from time.Time, inclusive bool) (events map[string]cfapi.CfEvent, err error)
 	getAllEventsInSpaceMutex       sync.RWMutex
 	getAllEventsInSpaceArgsForCall []struct {
-		from time.Time
+		from      time.Time
+		inclusive bool
 	}
 	getAllEventsInSpaceReturns struct {
 		result1 map[string]cfapi.CfEvent
 		result2 error
 	}
-	GetAllEventsForAppStub        func(appGUID string, from time.Time) (event cfapi.CfEvent, err error)
+	GetAllEventsForAppStub        func(appGUID string, from time.Time, inclusive bool) (event cfapi.CfEvent, err error)
 	getAllEventsForAppMutex       sync.RWMutex
 	getAllEventsForAppArgsForCall []struct {
-		appGUID string
-		from    time.Time
+		appGUID   string
+		from      time.Time
+		inclusive bool
 	}
 	getAllEventsForAppReturns struct {
 		result1 cfapi.CfEvent
@@ -778,15 +780,16 @@ func (fake *FakeCfSession) DomainsReturns(result1 api.DomainRepository) {
 	}{result1}
 }
 
-func (fake *FakeCfSession) GetAllEventsInSpace(from time.Time) (events map[string]cfapi.CfEvent, err error) {
+func (fake *FakeCfSession) GetAllEventsInSpace(from time.Time, inclusive bool) (events map[string]cfapi.CfEvent, err error) {
 	fake.getAllEventsInSpaceMutex.Lock()
 	fake.getAllEventsInSpaceArgsForCall = append(fake.getAllEventsInSpaceArgsForCall, struct {
-		from time.Time
-	}{from})
-	fake.recordInvocation("GetAllEventsInSpace", []interface{}{from})
+		from      time.Time
+		inclusive bool
+	}{from, inclusive})
+	fake.recordInvocation("GetAllEventsInSpace", []interface{}{from, inclusive})
 	fake.getAllEventsInSpaceMutex.Unlock()
 	if fake.GetAllEventsInSpaceStub != nil {
-		return fake.GetAllEventsInSpaceStub(from)
+		return fake.GetAllEventsInSpaceStub(from, inclusive)
 	} else {
 		return fake.getAllEventsInSpaceReturns.result1, fake.getAllEventsInSpaceReturns.result2
 	}
@@ -798,10 +801,10 @@ func (fake *FakeCfSession) GetAllEventsInSpaceCallCount() int {
 	return len(fake.getAllEventsInSpaceArgsForCall)
 }
 
-func (fake *FakeCfSession) GetAllEventsInSpaceArgsForCall(i int) time.Time {
+func (fake *FakeCfSession) GetAllEventsInSpaceArgsForCall(i int) (time.Time, bool) {
 	fake.getAllEventsInSpaceMutex.RLock()
 	defer fake.getAllEventsInSpaceMutex.RUnlock()
-	return fake.getAllEventsInSpaceArgsForCall[i].from
+	return fake.getAllEventsInSpaceArgsForCall[i].from, fake.getAllEventsInSpaceArgsForCall[i].inclusive
 }
 
 func (fake *FakeCfSession) GetAllEventsInSpaceReturns(result1 map[string]cfapi.CfEvent, result2 error) {
@@ -812,16 +815,17 @@ func (fake *FakeCfSession) GetAllEventsInSpaceReturns(result1 map[string]cfapi.C
 	}{result1, result2}
 }
 
-func (fake *FakeCfSession) GetAllEventsForApp(appGUID string, from time.Time) (event cfapi.CfEvent, err error) {
+func (fake *FakeCfSession) GetAllEventsForApp(appGUID string, from time.Time, inclusive bool) (event cfapi.CfEvent, err error) {
 	fake.getAllEventsForAppMutex.Lock()
 	fake.getAllEventsForAppArgsForCall = append(fake.getAllEventsForAppArgsForCall, struct {
-		appGUID string
-		from    time.Time
-	}{appGUID, from})
-	fake.recordInvocation("GetAllEventsForApp", []interface{}{appGUID, from})
+		appGUID   string
+		from      time.Time
+		inclusive bool
+	}{appGUID, from, inclusive})
+	fake.recordInvocation("GetAllEventsForApp", []interface{}{appGUID, from, inclusive})
 	fake.getAllEventsForAppMutex.Unlock()
 	if fake.GetAllEventsForAppStub != nil {
-		return fake.GetAllEventsForAppStub(appGUID, from)
+		return fake.GetAllEventsForAppStub(appGUID, from, inclusive)
 	} else {
 		return fake.getAllEventsForAppReturns.result1, fake.getAllEventsForAppReturns.result2
 	}
@@ -833,10 +837,10 @@ func (fake *FakeCfSession) GetAllEventsForAppCallCount() int {
 	return len(fake.getAllEventsForAppArgsForCall)
 }
 
-func (fake *FakeCfSession) GetAllEventsForAppArgsForCall(i int) (string, time.Time) {
+func (fake *FakeCfSession) GetAllEventsForAppArgsForCall(i int) (string, time.Time, bool) {
 	fake.getAllEventsForAppMutex.RLock()
 	defer fake.getAllEventsForAppMutex.RUnlock()
-	return fake.getAllEventsForAppArgsForCall[i].appGUID, fake.getAllEventsForAppArgsForCall[i].from
+	return fake.getAllEventsForAppArgsForCall[i].appGUID, fake.getAllEventsForAppArgsForCall[i].from, fake.getAllEventsForAppArgsForCall[i].inclusive
 }
 
 func (fake *FakeCfSession) GetAllEventsForAppReturns(result1 cfapi.CfEvent, result2 error) {

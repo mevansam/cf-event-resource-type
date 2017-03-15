@@ -50,12 +50,13 @@ var _ = Describe("Check Command", func() {
 			AppSummaryStub: func() api.AppSummaryRepository {
 				return appSummaryRepo
 			},
-			GetAllEventsInSpaceStub: func(from time.Time) (events map[string]cfapi.CfEvent, err error) {
+			GetAllEventsInSpaceStub: func(from time.Time, inclusive bool) (events map[string]cfapi.CfEvent, err error) {
 				events = make(map[string]cfapi.CfEvent)
 				for guid, cfEvent := range testEvents {
 					eventList := []models.EventFields{}
 					for _, event := range cfEvent.EventList {
-						if event.Timestamp.After(from) && event.Timestamp.Before(to) {
+						if (inclusive && event.Timestamp.Equal(from)) ||
+							event.Timestamp.After(from) && event.Timestamp.Before(to) {
 							eventList = append(eventList, event)
 						}
 					}
@@ -64,12 +65,13 @@ var _ = Describe("Check Command", func() {
 				}
 				return
 			},
-			GetAllEventsForAppStub: func(appGUID string, from time.Time) (cfEvent cfapi.CfEvent, err error) {
+			GetAllEventsForAppStub: func(appGUID string, from time.Time, inclusive bool) (cfEvent cfapi.CfEvent, err error) {
 				cfEvent, ok := testEvents[appGUID]
 				if ok {
 					eventList := []models.EventFields{}
 					for _, event := range cfEvent.EventList {
-						if event.Timestamp.After(from) && event.Timestamp.Before(to) {
+						if (inclusive && event.Timestamp.Equal(from)) ||
+							event.Timestamp.After(from) && event.Timestamp.Before(to) {
 							eventList = append(eventList, event)
 						}
 					}

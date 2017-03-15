@@ -89,12 +89,18 @@ func (c *CheckCommand) Run(request CheckRequest) (versions []Version, err error)
 				logger.DebugMessage("Retrieving new events for app '%s' after timestamp '%s'.",
 					app.Name, from.Format(time.RFC3339))
 
-				if appEvents, err = eventFilter.GetEventsForApp(app.GUID, from); err != nil {
+				if appEvents, err = eventFilter.GetEventsForApp(app.GUID, from, true); err != nil {
 					return
 				}
 				if exists {
 					if len(appEvents) > 0 {
-						newVersion[app.Name] = fmt.Sprintf("%s", appEvents[0])
+						for _, ae := range appEvents {
+							if ae.EventType != lastAppEvent.EventType ||
+								ae.Timestamp.After(lastAppEvent.Timestamp) {
+								newVersion[app.Name] = fmt.Sprintf("%s", ae)
+								break
+							}
+						}
 					} else {
 						newVersion[app.Name] = fmt.Sprintf("%s", lastAppEvent)
 					}

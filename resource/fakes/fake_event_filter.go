@@ -9,20 +9,22 @@ import (
 )
 
 type FakeEventFilter struct {
-	GetEventsForAllAppsInSpaceStub        func(from time.Time) ([]filters.AppEvent, error)
+	GetEventsForAllAppsInSpaceStub        func(from time.Time, inclusive bool) ([]filters.AppEvent, error)
 	getEventsForAllAppsInSpaceMutex       sync.RWMutex
 	getEventsForAllAppsInSpaceArgsForCall []struct {
-		from time.Time
+		from      time.Time
+		inclusive bool
 	}
 	getEventsForAllAppsInSpaceReturns struct {
 		result1 []filters.AppEvent
 		result2 error
 	}
-	GetEventsForAppStub        func(appGUID string, from time.Time) ([]filters.AppEvent, error)
+	GetEventsForAppStub        func(appGUID string, from time.Time, inclusive bool) ([]filters.AppEvent, error)
 	getEventsForAppMutex       sync.RWMutex
 	getEventsForAppArgsForCall []struct {
-		appGUID string
-		from    time.Time
+		appGUID   string
+		from      time.Time
+		inclusive bool
 	}
 	getEventsForAppReturns struct {
 		result1 []filters.AppEvent
@@ -32,15 +34,16 @@ type FakeEventFilter struct {
 	invocationsMutex sync.RWMutex
 }
 
-func (fake *FakeEventFilter) GetEventsForAllAppsInSpace(from time.Time) ([]filters.AppEvent, error) {
+func (fake *FakeEventFilter) GetEventsForAllAppsInSpace(from time.Time, inclusive bool) ([]filters.AppEvent, error) {
 	fake.getEventsForAllAppsInSpaceMutex.Lock()
 	fake.getEventsForAllAppsInSpaceArgsForCall = append(fake.getEventsForAllAppsInSpaceArgsForCall, struct {
-		from time.Time
-	}{from})
-	fake.recordInvocation("GetEventsForAllAppsInSpace", []interface{}{from})
+		from      time.Time
+		inclusive bool
+	}{from, inclusive})
+	fake.recordInvocation("GetEventsForAllAppsInSpace", []interface{}{from, inclusive})
 	fake.getEventsForAllAppsInSpaceMutex.Unlock()
 	if fake.GetEventsForAllAppsInSpaceStub != nil {
-		return fake.GetEventsForAllAppsInSpaceStub(from)
+		return fake.GetEventsForAllAppsInSpaceStub(from, inclusive)
 	} else {
 		return fake.getEventsForAllAppsInSpaceReturns.result1, fake.getEventsForAllAppsInSpaceReturns.result2
 	}
@@ -52,10 +55,10 @@ func (fake *FakeEventFilter) GetEventsForAllAppsInSpaceCallCount() int {
 	return len(fake.getEventsForAllAppsInSpaceArgsForCall)
 }
 
-func (fake *FakeEventFilter) GetEventsForAllAppsInSpaceArgsForCall(i int) time.Time {
+func (fake *FakeEventFilter) GetEventsForAllAppsInSpaceArgsForCall(i int) (time.Time, bool) {
 	fake.getEventsForAllAppsInSpaceMutex.RLock()
 	defer fake.getEventsForAllAppsInSpaceMutex.RUnlock()
-	return fake.getEventsForAllAppsInSpaceArgsForCall[i].from
+	return fake.getEventsForAllAppsInSpaceArgsForCall[i].from, fake.getEventsForAllAppsInSpaceArgsForCall[i].inclusive
 }
 
 func (fake *FakeEventFilter) GetEventsForAllAppsInSpaceReturns(result1 []filters.AppEvent, result2 error) {
@@ -66,16 +69,17 @@ func (fake *FakeEventFilter) GetEventsForAllAppsInSpaceReturns(result1 []filters
 	}{result1, result2}
 }
 
-func (fake *FakeEventFilter) GetEventsForApp(appGUID string, from time.Time) ([]filters.AppEvent, error) {
+func (fake *FakeEventFilter) GetEventsForApp(appGUID string, from time.Time, inclusive bool) ([]filters.AppEvent, error) {
 	fake.getEventsForAppMutex.Lock()
 	fake.getEventsForAppArgsForCall = append(fake.getEventsForAppArgsForCall, struct {
-		appGUID string
-		from    time.Time
-	}{appGUID, from})
-	fake.recordInvocation("GetEventsForApp", []interface{}{appGUID, from})
+		appGUID   string
+		from      time.Time
+		inclusive bool
+	}{appGUID, from, inclusive})
+	fake.recordInvocation("GetEventsForApp", []interface{}{appGUID, from, inclusive})
 	fake.getEventsForAppMutex.Unlock()
 	if fake.GetEventsForAppStub != nil {
-		return fake.GetEventsForAppStub(appGUID, from)
+		return fake.GetEventsForAppStub(appGUID, from, inclusive)
 	} else {
 		return fake.getEventsForAppReturns.result1, fake.getEventsForAppReturns.result2
 	}
@@ -87,10 +91,10 @@ func (fake *FakeEventFilter) GetEventsForAppCallCount() int {
 	return len(fake.getEventsForAppArgsForCall)
 }
 
-func (fake *FakeEventFilter) GetEventsForAppArgsForCall(i int) (string, time.Time) {
+func (fake *FakeEventFilter) GetEventsForAppArgsForCall(i int) (string, time.Time, bool) {
 	fake.getEventsForAppMutex.RLock()
 	defer fake.getEventsForAppMutex.RUnlock()
-	return fake.getEventsForAppArgsForCall[i].appGUID, fake.getEventsForAppArgsForCall[i].from
+	return fake.getEventsForAppArgsForCall[i].appGUID, fake.getEventsForAppArgsForCall[i].from, fake.getEventsForAppArgsForCall[i].inclusive
 }
 
 func (fake *FakeEventFilter) GetEventsForAppReturns(result1 []filters.AppEvent, result2 error) {
