@@ -48,7 +48,7 @@ jobs:
       params:
         CF_TARGET_API: https://api.local.pcfdev.io
         CF_TARGET_SKIP_SSL_VALIDATION: --skip-ssl-validation
-        CF_TARGET_PASSWORD: admin
         CF_TARGET_USER: admin
+        CF_TARGET_PASSWORD: admin
         CF_TARGET_ORG: pcfdev-org
         CF_TARGET_SPACE: dev2
