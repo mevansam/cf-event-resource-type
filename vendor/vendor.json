@@ -183,7 +183,7 @@
 			"revisionTime": "2017-02-03T23:56:03Z"
 		},
 		{
-			"checksumSHA1": "CmwJ8ScJ2xsCJC7zegIbiEcUqHE=",
+			"checksumSHA1": "i3JAviRQZ/VAu1jv6myTxYpMJRM=",
 			"path": "code.cloudfoundry.org/cli/cf/api/resources",
 			"revision": "489fb5030c24b678a6232cc730d328cd7b2d98e9",
 			"revisionTime": "2017-02-03T23:56:03Z"
@@ -771,7 +771,7 @@
 			"revisionTime": "2017-03-15T18:56:23Z"
 		},
 		{
-			"checksumSHA1": "+Zx1kKyU2ABHhpn4PLG3LSBIuGM=",
+			"checksumSHA1": "GmFhoDYcV/fVpD2qh4XVjWXKbDY=",
 			"path": "github.com/mevansam/cf-cli-api/filters",
 			"revision": "f5a897327a4011a82d92bc843ccf236fdbabd257",
 			"revisionTime": "2017-03-15T18:56:23Z"
