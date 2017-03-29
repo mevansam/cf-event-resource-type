@@ -116,7 +116,6 @@ var _ = Describe("Check Command", func() {
 
 			var (
 				err      error
-				exists   bool
 				versions []resource.Version
 			)
 
@@ -143,19 +142,18 @@ var _ = Describe("Check Command", func() {
 			versions, err = command.Run(request)
 			Expect(err).Should(BeNil())
 			Expect(len(versions)).To(Equal(1))
-			Expect(versions[0]["app1"]).To(Equal(""))
-			Expect(versions[0]["app2"]).To(Equal(""))
+			Expect(versions[0]["app1"]).To(Equal("19b9d70b-6ebe-47d7-9313-f0c213445036|app1|app|created|1970-01-01T00:00:00Z"))
+			Expect(versions[0]["app2"]).To(Equal("62aa7e42-f047-46de-98f1-ff4818a82d6e|app2|app|created|1970-01-01T00:00:00Z"))
 
 			to, _ = time.Parse(time.RFC3339, "2017-03-03T18:13:00+01:00")
-			fmt.Printf(colorstring.Color("\n[green]===> Detecting event versions in test data  to: %s\n"), to)
+			fmt.Printf(colorstring.Color("\n[green]===> Detecting event versions in test data to: %s\n"), to)
 
 			request.Version = versions[0]
 			versions, err = command.Run(request)
 			Expect(err).Should(BeNil())
 			Expect(len(versions)).To(Equal(1))
-			Expect(versions[0]["app1"]).To(Equal("19b9d70b-6ebe-47d7-9313-f0c213445036|app1|app|created|2017-03-03T18:12:48+01:00"))
-			_, exists = versions[0]["app2"]
-			Expect(exists).Should(BeFalse())
+			Expect(assertVersionEqual(versions[0]["app1"], "19b9d70b-6ebe-47d7-9313-f0c213445036|app1|app|created|2017-03-03T18:12:48+01:00")).To(BeTrue())
+			Expect(versions[0]["app2"]).To(Equal("62aa7e42-f047-46de-98f1-ff4818a82d6e|app2|app|created|1970-01-01T00:00:00Z"))
 
 			to, _ = time.Parse(time.RFC3339, "2017-03-03T18:14:00+01:00")
 			fmt.Printf(colorstring.Color("\n[green]===> Detecting event versions in test data  to: %s\n"), to)
@@ -164,8 +162,8 @@ var _ = Describe("Check Command", func() {
 			versions, err = command.Run(request)
 			Expect(err).Should(BeNil())
 			Expect(len(versions)).To(Equal(1))
-			Expect(versions[0]["app1"]).To(Equal("19b9d70b-6ebe-47d7-9313-f0c213445036|app1|app|created|2017-03-03T18:12:48+01:00"))
-			Expect(versions[0]["app2"]).To(Equal("62aa7e42-f047-46de-98f1-ff4818a82d6e|app2|app|created|2017-03-03T18:13:19+01:00"))
+			Expect(assertVersionEqual(versions[0]["app1"], "19b9d70b-6ebe-47d7-9313-f0c213445036|app1|app|created|2017-03-03T18:12:48+01:00")).To(BeTrue())
+			Expect(assertVersionEqual(versions[0]["app2"], "62aa7e42-f047-46de-98f1-ff4818a82d6e|app2|app|created|2017-03-03T18:13:19+01:00")).To(BeTrue())
 
 			to, _ = time.Parse(time.RFC3339, "2017-03-03T18:15:00+01:00")
 			fmt.Printf(colorstring.Color("\n[green]===> Detecting event versions in test data  to: %s\n"), to)
@@ -174,8 +172,8 @@ var _ = Describe("Check Command", func() {
 			versions, err = command.Run(request)
 			Expect(err).Should(BeNil())
 			Expect(len(versions)).To(Equal(1))
-			Expect(versions[0]["app1"]).To(Equal("19b9d70b-6ebe-47d7-9313-f0c213445036|app1|app|modified|2017-03-03T18:14:44+01:00"))
-			Expect(versions[0]["app2"]).To(Equal("62aa7e42-f047-46de-98f1-ff4818a82d6e|app2|app|routed-added|2017-03-03T18:14:59+01:00"))
+			Expect(assertVersionEqual(versions[0]["app1"], "19b9d70b-6ebe-47d7-9313-f0c213445036|app1|app|modified|2017-03-03T18:14:44+01:00")).To(BeTrue())
+			Expect(assertVersionEqual(versions[0]["app2"], "62aa7e42-f047-46de-98f1-ff4818a82d6e|app2|app|routed-added|2017-03-03T18:14:59+01:00")).To(BeTrue())
 
 			to, _ = time.Parse(time.RFC3339, "2017-03-03T18:16:00+01:00")
 			fmt.Printf(colorstring.Color("\n[green]===> Detecting event versions in test data  to: %s\n"), to)
@@ -184,8 +182,8 @@ var _ = Describe("Check Command", func() {
 			versions, err = command.Run(request)
 			Expect(err).Should(BeNil())
 			Expect(len(versions)).To(Equal(1))
-			Expect(versions[0]["app1"]).To(Equal("19b9d70b-6ebe-47d7-9313-f0c213445036|app1|app|modified|2017-03-03T18:14:44+01:00"))
-			Expect(versions[0]["app2"]).To(Equal("62aa7e42-f047-46de-98f1-ff4818a82d6e|app2|app|modified|2017-03-03T18:15:39+01:00"))
+			Expect(assertVersionEqual(versions[0]["app1"], "19b9d70b-6ebe-47d7-9313-f0c213445036|app1|app|modified|2017-03-03T18:14:44+01:00")).To(BeTrue())
+			Expect(assertVersionEqual(versions[0]["app2"], "62aa7e42-f047-46de-98f1-ff4818a82d6e|app2|app|modified|2017-03-03T18:15:39+01:00")).To(BeTrue())
 
 			to, _ = time.Parse(time.RFC3339, "2017-03-03T18:17:00+01:00")
 			fmt.Printf(colorstring.Color("\n[green]===> Detecting event versions in test data  to: %s\n"), to)
@@ -194,8 +192,8 @@ var _ = Describe("Check Command", func() {
 			versions, err = command.Run(request)
 			Expect(err).Should(BeNil())
 			Expect(len(versions)).To(Equal(1))
-			Expect(versions[0]["app1"]).To(Equal("19b9d70b-6ebe-47d7-9313-f0c213445036|app1|app|scaled|2017-03-03T18:16:46+01:00"))
-			Expect(versions[0]["app2"]).To(Equal("62aa7e42-f047-46de-98f1-ff4818a82d6e|app2|app|modified|2017-03-03T18:15:39+01:00"))
+			Expect(assertVersionEqual(versions[0]["app1"], "19b9d70b-6ebe-47d7-9313-f0c213445036|app1|app|scaled|2017-03-03T18:16:46+01:00")).To(BeTrue())
+			Expect(assertVersionEqual(versions[0]["app2"], "62aa7e42-f047-46de-98f1-ff4818a82d6e|app2|app|modified|2017-03-03T18:15:39+01:00")).To(BeTrue())
 
 			fmt.Printf("Versions: %# v", pretty.Formatter(versions))
 
@@ -206,8 +204,8 @@ var _ = Describe("Check Command", func() {
 			versions, err = command.Run(request)
 			Expect(err).Should(BeNil())
 			Expect(len(versions)).To(Equal(1))
-			Expect(versions[0]["app1"]).To(Equal("19b9d70b-6ebe-47d7-9313-f0c213445036|app1|app|routed-added|2017-03-03T18:17:02+01:00"))
-			Expect(versions[0]["app2"]).To(Equal("62aa7e42-f047-46de-98f1-ff4818a82d6e|app2|app|modified|2017-03-03T18:15:39+01:00"))
+			Expect(assertVersionEqual(versions[0]["app1"], "19b9d70b-6ebe-47d7-9313-f0c213445036|app1|app|routed-added|2017-03-03T18:17:02+01:00")).To(BeTrue())
+			Expect(assertVersionEqual(versions[0]["app2"], "62aa7e42-f047-46de-98f1-ff4818a82d6e|app2|app|modified|2017-03-03T18:15:39+01:00")).To(BeTrue())
 
 			to, _ = time.Parse(time.RFC3339, "2017-03-03T18:19:00+01:00")
 			fmt.Printf(colorstring.Color("\n[green]===> Detecting event versions in test data  to: %s\n"), to)
@@ -216,8 +214,8 @@ var _ = Describe("Check Command", func() {
 			versions, err = command.Run(request)
 			Expect(err).Should(BeNil())
 			Expect(len(versions)).To(Equal(1))
-			Expect(versions[0]["app1"]).To(Equal("19b9d70b-6ebe-47d7-9313-f0c213445036|app1|app|modified|2017-03-03T18:17:52+01:00"))
-			Expect(versions[0]["app2"]).To(Equal("62aa7e42-f047-46de-98f1-ff4818a82d6e|app2|app|modified|2017-03-03T18:15:39+01:00"))
+			Expect(assertVersionEqual(versions[0]["app1"], "19b9d70b-6ebe-47d7-9313-f0c213445036|app1|app|modified|2017-03-03T18:17:52+01:00")).To(BeTrue())
+			Expect(assertVersionEqual(versions[0]["app2"], "62aa7e42-f047-46de-98f1-ff4818a82d6e|app2|app|modified|2017-03-03T18:15:39+01:00")).To(BeTrue())
 
 			fmt.Printf("Versions: %# v", pretty.Formatter(versions))
 
@@ -228,8 +226,8 @@ var _ = Describe("Check Command", func() {
 			versions, err = command.Run(request)
 			Expect(err).Should(BeNil())
 			Expect(len(versions)).To(Equal(1))
-			Expect(versions[0]["app1"]).To(Equal("19b9d70b-6ebe-47d7-9313-f0c213445036|app1|app|modified|2017-03-03T18:17:52+01:00"))
-			Expect(versions[0]["app2"]).To(Equal("62aa7e42-f047-46de-98f1-ff4818a82d6e|app2|app|modified|2017-03-03T18:15:39+01:00"))
+			Expect(assertVersionEqual(versions[0]["app1"], "19b9d70b-6ebe-47d7-9313-f0c213445036|app1|app|modified|2017-03-03T18:17:52+01:00")).To(BeTrue())
+			Expect(assertVersionEqual(versions[0]["app2"], "62aa7e42-f047-46de-98f1-ff4818a82d6e|app2|app|modified|2017-03-03T18:15:39+01:00")).To(BeTrue())
 		})
 	})
 })

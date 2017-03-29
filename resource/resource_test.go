@@ -1,6 +1,7 @@
 package resource_test
 
 import (
+	"strings"
 	"time"
 
 	"code.cloudfoundry.org/cli/cf/models"
@@ -14,6 +15,12 @@ import (
 func TestCmd(t *testing.T) {
 	RegisterFailHandler(Fail)
 	RunSpecs(t, "Resource Commands Test Suite")
+}
+
+func assertVersionEqual(v1, v2 string) bool {
+	fields := strings.Split(v2, "|")
+	ts, _ := time.Parse(time.RFC3339, fields[4])
+	return v1 == strings.Join(append(fields[:4], time.Unix(ts.Unix(), 0).Format(time.RFC3339)), "|")
 }
 
 var srcApps = []models.Application{
