@@ -8,7 +8,6 @@ import (
 	"strconv"
 	"strings"
 	"testing"
-	"time"
 
 	"github.com/mevansam/cf-cli-api/cfapi"
 	"github.com/mevansam/cf-cli-api/filters"
@@ -105,7 +104,7 @@ var _ = Describe("In Command", func() {
 				Expect(err).Should(BeNil())
 				ts, err := strconv.ParseInt(string(timestamp), 10, 64)
 				Expect(err).Should(BeNil())
-				Expect(time.Unix(ts, 0)).To(Equal(appEvent.Timestamp))
+				Expect(ts).To(Equal(appEvent.Timestamp.Unix()))
 			}
 
 			fmt.Printf("Response: %# v\n", response)
