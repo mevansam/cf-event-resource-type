@@ -24,9 +24,11 @@ func NewCheckCommand(client *CfClient) *CheckCommand {
 }
 
 // Run -
-func (c *CheckCommand) Run(request CheckRequest) (versions []Version, err error) {
+func (c *CheckCommand) Run(request CheckRequest) ([]Version, error) {
 
 	var (
+		err error
+
 		getAppEvents, allApps, exists bool
 
 		appEventVersion string
@@ -46,13 +48,13 @@ func (c *CheckCommand) Run(request CheckRequest) (versions []Version, err error)
 	newVersion := make(Version)
 
 	if appsInSpace, err = c.client.session.AppSummary().GetSummariesInCurrentSpace(); err != nil {
-		return
+		return nil, err
 	}
 
 	for appName, appEventVersion := range request.Version {
 
 		if lastAppEvent, err = filters.NewAppEvent(appEventVersion); err != nil {
-			return
+			return nil, err
 		}
 		if lastAppEvent.EventType != filters.EtDeleted {
 			if _, exists = utils.ContainsApp(appName, appsInSpace); !exists {
@@ -78,11 +80,13 @@ func (c *CheckCommand) Run(request CheckRequest) (versions []Version, err error)
 
 				appEventVersion, exists = request.Version[app.Name]
 				if exists {
+					logger.DebugMessage("Last event version for app '%s': %s", app.Name, appEventVersion)
 					if lastAppEvent, err = filters.NewAppEvent(appEventVersion); err != nil {
-						return
+						return nil, err
 					}
 					from = lastAppEvent.Timestamp
 				} else {
+					logger.DebugMessage("No previous event version received for app '%s'.", app.Name)
 					from = epoch
 				}
 
@@ -90,7 +94,7 @@ func (c *CheckCommand) Run(request CheckRequest) (versions []Version, err error)
 					app.Name, from.Format(time.RFC3339))
 
 				if appEvents, err = eventFilter.GetEventsForApp(app.GUID, from, true); err != nil {
-					return
+					return nil, err
 				}
 				if exists {
 					if len(appEvents) > 0 {
@@ -116,13 +120,26 @@ func (c *CheckCommand) Run(request CheckRequest) (versions []Version, err error)
 					}
 					if i >= 0 {
 						newVersion[app.Name] = fmt.Sprintf("%s", appEvents[i])
+					} else {
+						// Create a deploy event
+						newVersion[app.Name] = fmt.Sprintf("%s", filters.AppEvent{
+							SourceGUID: app.GUID,
+							SourceName: app.Name,
+							SourceType: "app",
+							EventType:  filters.EtCreated,
+							Timestamp:  epoch,
+						})
 					}
 				}
 			}
 		}
-		versions = []Version{newVersion}
-	} else {
-		versions = []Version{request.Version}
+		if len(newVersion) > 0 {
+			return []Version{newVersion}, nil
+		}
 	}
-	return
+
+	if request.Version != nil {
+		return []Version{request.Version}, nil
+	}
+	return []Version{}, nil
 }
